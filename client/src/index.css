@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+*{
+    font-family: Outfit;
+}
+
+@layer base{
+    html {
+        scroll-behavior:smooth;
+    }
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+.ql-container {
+  border: none !important;
+  height: 100%;
+}
+
+.ql-editor {
+  min-height: 180px;
+  padding: 12px 14px;
+}
