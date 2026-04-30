@@ -2,23 +2,21 @@ import { Webhook } from "svix";
 import User from "../models/User.js";
 
 export const clerkWebhooks = async (req, res) => {
-  console.log("🔥 WEBHOOK HIT");
   try {
     const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET); 
     const payload = req.body;
-    console.log("🔐 VERIFYING WEBHOOK...");
+    console.log("🔥 Clerk webhook received");
     const event = whook.verify(req.body, {
       "svix-id": req.headers["svix-id"],
       "svix-signature": req.headers["svix-signature"],
       "svix-timestamp": req.headers["svix-timestamp"]
     });
-    console.log("✅ VERIFIED SUCCESSFULLY");
+
+    console.log("✅ Webhook verified");
     const { data, type } = event;
 
     switch (type) {
       case "user.created": {
-        console.log("TYPE:", type);
-        console.log("DATA:", data);
         const userData = {
           _id: data.id,
           email: data.email_addresses?.[0]?.email_address,
@@ -26,15 +24,13 @@ export const clerkWebhooks = async (req, res) => {
           image: data.image_url,
           resume: "",
         };
-
+        console.log("👤 Creating user:", data.id);
         await User.create(userData);
-        console.log("💾 USER CREATED IN DB");
+        console.log("💾 User stored");
         return res.json({ success: true });
       }
 
       case "user.updated": {
-        console.log("TYPE:", type);
-        console.log("DATA:", data);
         const userData = {
           email: data.email_addresses?.[0]?.email_address,
           name: data.first_name + " " + data.last_name,
@@ -46,8 +42,6 @@ export const clerkWebhooks = async (req, res) => {
       }
 
       case "user.deleted": {
-        console.log("TYPE:", type);
-        console.log("DATA:", data);
         await User.findByIdAndDelete(data.id);
         return res.json({ success: true });
       }
