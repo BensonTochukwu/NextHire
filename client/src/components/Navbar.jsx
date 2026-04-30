@@ -18,7 +18,22 @@ const NavBar = () => {
       <div className="container px-4 2xl:px-20 mx-auto flex items-center justify-between h-20">
         {/* Logo */}
         <img
-          onClick={() => navigate("/")}
+          onClick={() => {
+            if (window.location.pathname === "/") {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            } else {
+              navigate("/");
+              setTimeout(() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }, 50);
+            }
+          }}
           className="cursor-pointer h-10"
           src={assets.logo}
           alt="Logo"
@@ -30,7 +45,7 @@ const NavBar = () => {
             <>
               <Link
                 to="/applications"
-                className="text-sm text-gray-700 hover:text-blue-600 transition"
+                className="text-sm text-gray-700 hover:text-blue-600 transition cursor-pointer"
               >
                 Applied Jobs
               </Link>
@@ -47,7 +62,7 @@ const NavBar = () => {
             <>
               <button
                 onClick={() => setShowRecruiterLogin(true)}
-                className="text-gray-700 hover:text-blue-600 transition"
+                className="text-gray-700 hover:text-blue-600 transition cursor-pointer"
               >
                 Employer Login
               </button>
@@ -56,7 +71,7 @@ const NavBar = () => {
 
               <button
                 onClick={() => openSignIn()}
-                className="text-gray-700 hover:text-blue-600 transition"
+                className="text-gray-700 hover:text-blue-600 transition cursor-pointer"
               >
                 Login
               </button>

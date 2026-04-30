@@ -13,7 +13,19 @@ const Hero = () => {
       title: titleRef.current.value,
       location: locationRef.current.value,
     });
+
     setIsSearched(true);
+
+    // allow React state update first
+    setTimeout(() => {
+      const el = document.getElementById("job-listing");
+      if (el) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 100);
   };
 
   return (
@@ -61,7 +73,7 @@ const Hero = () => {
             {/* Button */}
             <button
               onClick={onSearch}
-              className="w-full md:w-auto bg-gray-900 text-white px-8 py-3 rounded-xl hover:opacity-90 transition shrink-0"
+              className="w-full md:w-auto bg-gray-900 text-white px-8 py-3 rounded-xl hover:opacity-90 transition shrink-0 cursor-pointer"
             >
               Search
             </button>

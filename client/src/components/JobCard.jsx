@@ -49,7 +49,7 @@ const JobCard = ({ job }) => {
             navigate(`/apply-job/${job._id}`);
             scrollTo(0, 0);
           }}
-          className="flex-1 bg-gray-900 text-white rounded-xl py-2.5 text-sm hover:opacity-90 transition"
+          className="flex-1 bg-gray-900 text-white rounded-xl py-2.5 text-sm hover:opacity-90 transition cursor-pointer"
         >
           Apply Now
         </button>
@@ -59,7 +59,7 @@ const JobCard = ({ job }) => {
             navigate(`/apply-job/${job._id}`);
             scrollTo(0, 0);
           }}
-          className="flex-1 border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm hover:bg-gray-50 transition"
+          className="flex-1 border border-gray-200 text-gray-700 rounded-xl py-2.5 text-sm hover:bg-gray-50 transition cursor-pointer"
         >
           View Details
         </button>

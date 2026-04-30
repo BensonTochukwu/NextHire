@@ -174,7 +174,9 @@ const JobListing = () => {
         </aside>
 
       {/* JOB LIST */}
-      <section className="w-full lg:w-3/4 text-gray-800">
+      <section 
+      id="job-listing"
+      className="w-full lg:w-3/4 text-gray-800">
         <div className="mb-6 text-center lg:text-left">
             <h3 className="font-semibold text-3xl">
                 Latest Opportunities
@@ -240,7 +242,7 @@ const JobListing = () => {
               <a key={index} href="#job-list">
                 <button
                   onClick={() => setCurrentPage(index + 1)}
-                  className={`h-10 w-10 flex items-center justify-center border rounded-lg text-sm transition ${
+                  className={`h-10 w-10 flex items-center justify-center border cursor-pointer rounded-lg text-sm transition ${
                     currentPage === index + 1
                       ? "bg-blue-100 text-blue-600 border-blue-200"
                       : "text-gray-500 hover:bg-gray-50"
