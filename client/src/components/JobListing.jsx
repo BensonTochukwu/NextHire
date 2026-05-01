@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { assets, JobCategories, JobLocations } from "../assets/assets";
 import JobCard from "./JobCard";
+import JobCardSkeleton from "./JobCardSkeleton";
 
 const JobListing = () => {
-  const { isSearched, searchFilter, setSearchFilter, jobs } =
+  const { isSearched, searchFilter, setSearchFilter, jobs, isLoading } =
     useContext(AppContext);
 
   const [showFilter, setShowFilter] = useState(true);
@@ -187,39 +188,43 @@ const JobListing = () => {
             </p>
         </div>
 
-        {filteredJobs.length > 0 ? (
-        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'> 
-            {
-                filteredJobs
-                    .slice((currentPage - 1) * 6, currentPage * 6)
-                    .map((job, index) => (
-                        <JobCard key={index} job={job} />
-                    ))
-            }
-        </div>
+        {isLoading ? (
+          // ── SKELETON STATE ──────────────────────────────
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <JobCardSkeleton key={i} />
+            ))}
+          </div>
+
+        ) : filteredJobs.length > 0 ? (
+          // ── RESULTS STATE ───────────────────────────────
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredJobs
+              .slice((currentPage - 1) * 6, currentPage * 6)
+              .map((job, index) => (
+                <JobCard key={index} job={job} />
+              ))}
+          </div>
+
         ) : (
-        <div className="flex flex-col items-center justify-center text-center py-20">
+          // ── EMPTY STATE (only after load completes) ─────
+          <div className="flex flex-col items-center justify-center text-center py-20">
             <div className="text-5xl mb-4">🔍</div>
-
-            <h3 className="text-xl font-semibold text-gray-800">
-                No jobs found
-            </h3>
-
+            <h3 className="text-xl font-semibold text-gray-800">No jobs found</h3>
             <p className="text-gray-500 mt-2 max-w-md">
-                Try changing your filters or search keywords.
+              Try changing your filters or search keywords.
             </p>
-
             <button
-                onClick={() => {
-                    setSearchFilter({ title: "", location: "" });
-                    setSelectedCategories([]);
-                    setSelectedLocations([]);
-                }}
-                className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-xl hover:opacity-90 transition"
+              onClick={() => {
+                setSearchFilter({ title: "", location: "" });
+                setSelectedCategories([]);
+                setSelectedLocations([]);
+              }}
+              className="mt-6 px-6 py-2 bg-gray-900 text-white rounded-xl hover:opacity-90 transition"
             >
-                Clear Filters
+              Clear Filters
             </button>
-        </div>
+          </div>
         )}
 
         {/* PAGINATION */}

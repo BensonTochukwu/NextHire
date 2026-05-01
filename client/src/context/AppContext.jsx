@@ -19,6 +19,9 @@ export const AppContextProvider = (props) => {
   const [isSearched, setIsSearched] = useState(false);
   const [jobs, setJobs] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefetching, setIsRefetching] = useState(false); // ← added
+
   const [showRecruiterLogin, setShowRecruiterLogin] = useState(false);
   const [companyToken, setCompanyToken] = useState(null);
   const [companyData, setCompanyData] = useState(null);
@@ -26,8 +29,8 @@ export const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(null);
   const [userApplications, setUserApplications] = useState([]);
 
-  // ✅ FIXED: backend search enabled
-  const fetchJobs = async () => {
+  const fetchJobs = async ({ initial = false } = {}) => {
+    initial ? setIsLoading(true) : setIsRefetching(true); // ← updated
     try {
       const { data } = await axios.get(`${backendUrl}/api/jobs`, {
         params: {
@@ -35,7 +38,6 @@ export const AppContextProvider = (props) => {
           location: searchFilter.location,
         },
       });
-
       if (data.success) {
         setJobs(data.jobs);
       } else {
@@ -43,6 +45,8 @@ export const AppContextProvider = (props) => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      initial ? setIsLoading(false) : setIsRefetching(false); // ← updated
     }
   };
 
@@ -52,7 +56,6 @@ export const AppContextProvider = (props) => {
         backendUrl + "/api/company/company",
         { headers: { token: companyToken } }
       );
-
       if (data.success) {
         setCompanyData(data.company);
       } else {
@@ -66,11 +69,9 @@ export const AppContextProvider = (props) => {
   const fetchUserData = async () => {
     try {
       const token = await getToken();
-
       const { data } = await axios.get(backendUrl + "/api/user/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (data.success) {
         setUserData(data.user);
       } else {
@@ -84,14 +85,10 @@ export const AppContextProvider = (props) => {
   const fetchUserApplications = async () => {
     try {
       const token = await getToken();
-
       const { data } = await axios.get(
         backendUrl + "/api/user/applications",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (data.success) {
         setUserApplications(data.applications);
       } else {
@@ -104,7 +101,7 @@ export const AppContextProvider = (props) => {
 
   // initial load
   useEffect(() => {
-    fetchJobs();
+    fetchJobs({ initial: true }); // ← updated
 
     const storedCompanyToken = localStorage.getItem("companyToken");
     if (storedCompanyToken) {
@@ -127,12 +124,11 @@ export const AppContextProvider = (props) => {
     }
   }, [user]);
 
-  // 🔥 IMPROVED: Debounced search (THIS is the upgrade)
+  // debounced search
   useEffect(() => {
     const timeout = setTimeout(() => {
-      fetchJobs();
+      fetchJobs(); // initial defaults to false → uses isRefetching
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [searchFilter]);
 
@@ -143,6 +139,10 @@ export const AppContextProvider = (props) => {
     setIsSearched,
     setJobs,
     jobs,
+    isLoading,
+    setIsLoading,
+    isRefetching,  // ← added
+    setIsRefetching,
     showRecruiterLogin,
     setShowRecruiterLogin,
     companyToken,
